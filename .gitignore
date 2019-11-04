@@ -1,0 +1,9 @@
+
+#ignore output files
+audios/
+
+#ignore input files
+*.mp4
+
+#ignore logo 
+*.png
