@@ -29,5 +29,5 @@ $ pip install -r requirements.txt
 Run the script with the following command.
 
 ```sh
-$ pip install -r requirements.txt
+$ python3 app.py
 ```
