@@ -1,6 +1,7 @@
 
 #ignore output files
 audios/
+*.mp3
 
 #ignore input files
 *.mp4
@@ -10,3 +11,6 @@ audios/
 
 #tests
 test_app.py
+
+#pycahce
+__pycache__/
