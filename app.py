@@ -14,44 +14,51 @@ def clean_filename(filepath):
     """
     return filepath.split("/")[-1].replace(".mp4", "")
 
-def convert_mp4_to_mp3(filepath, prefix="lesson"):
+def directory_status(dir_name):
+    """
+    Checks if provided direcotry exists.
+    If not, creates one in the project root direcotory.
+    Returns True.
+    """
+    if not os.path.exists(dir_name):
+        os.mkdir(dir_name)
+        print(f"Directory {dir_name} created.")
+    return True
+
+def convert_mp4_to_mp3(filepath, dir_name ,prefix):
     """
     Converts .mp4 file to mp3 and save it in the provided path.
     """
     filename = prefix + clean_filename(filepath)
-    proc = os.getpid()
-
-    if not os.path.exists("audios"):
-        os.mkdir("audios")
-        print("Directory audios created.")
 
     try:
         video = AudioSegment.from_file(filepath)
     except OSError as err:
         print("ERROR: " + err)
         
-    video.export(
-        out_f=f"audios/{filename}.mp3",
-        format="mp3",
-        bitrate="312k",
-        tags={
-            "title":f"{filename}",
-            "artist":"DamKlis",
-            "album": "xxxxxxx"
-            },
-        cover="assets/cover.png"
-        )
+    if directory_status(dir_name):
+        video.export(
+            out_f=f"{dir_name}/{filename}.mp3",
+            format="mp3",
+            bitrate="312k",
+            tags={
+                "title":f"{filename}",
+                "artist":"Example",
+                "album": "Example"
+                },
+            cover="assets/cover.png"
+            )
 
-    print(f"Converted {filename}.mp4 to {filename}.mp3 by process {proc}.")
+    print(f"Converted {filename}.mp4 to {filename}.mp3. Process:{os.getpid()}.")
 
 def run_conversion():
     """
     Running script using a multiprocessing module.
     """
     pool = multi.Pool(multi.cpu_count())
-    pool.map(
+    pool.starmap(
         convert_mp4_to_mp3,
-        [path for path in glob.glob("videos/*.mp4")]
+        [(path, "audios", "example") for path in glob.glob("videos/*.mp4")]
         )
 
 if __name__ == "__main__":
