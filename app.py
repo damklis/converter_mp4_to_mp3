@@ -20,10 +20,14 @@ def directory_status(dir_name):
     If not, creates one in the project root direcotory.
     Returns True.
     """
-    if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
-        print(f"Directory {dir_name} created.")
-    return True
+    try:
+        if not os.path.exists(dir_name):
+            os.mkdir(dir_name)
+            print(f"Directory {dir_name} created.")
+            return True
+    except OSError as err:
+        print(f"ERROR: {err}")
+        return False
 
 def convert_mp4_to_mp3(filepath, dir_name ,prefix):
     """
@@ -34,7 +38,7 @@ def convert_mp4_to_mp3(filepath, dir_name ,prefix):
     try:
         video = AudioSegment.from_file(filepath)
     except OSError as err:
-        print("ERROR: " + err)
+        print(f"ERROR: {err}")
         
     if directory_status(dir_name):
         video.export(
