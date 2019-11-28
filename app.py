@@ -4,7 +4,6 @@ import os
 import time
 import multiprocessing as multi
 
-
 ## Measuring script execution time.
 start = time.time()
 
@@ -14,7 +13,7 @@ def clean_filename(filepath):
     """
     return filepath.split("/")[-1].replace(".mp4", "")
 
-def directory_status(dir_name):
+def check_dir_status(dir_name):
     """
     Checks if provided direcotry exists.
     If not, creates one in the project root direcotory.
@@ -25,8 +24,11 @@ def directory_status(dir_name):
             os.mkdir(dir_name)
             print(f"Directory {dir_name} created.")
             return True
-    except OSError as err:
-        print(f"ERROR: {err}")
+        elif os.path.exists(dir_name):
+            print(f"Directory {dir_name} already exists.")
+            return True
+    except OSError as os_err:
+        print(f"OSError occured. More info: {os_err}")
         return False
 
 def convert_mp4_to_mp3(filepath, dir_name ,prefix):
@@ -37,23 +39,24 @@ def convert_mp4_to_mp3(filepath, dir_name ,prefix):
 
     try:
         video = AudioSegment.from_file(filepath)
-    except OSError as err:
-        print(f"ERROR: {err}")
+    except OSError as os_err:
+        print(f"OSError occured. More info: {os_err}")
         
-    if directory_status(dir_name):
+    if check_dir_status(dir_name):
         video.export(
             out_f=f"{dir_name}/{filename}.mp3",
             format="mp3",
             bitrate="312k",
             tags={
                 "title":f"{filename}",
-                "artist":"Example",
-                "album": "Example"
+                "artist":"example",
+                "album": "example"
                 },
             cover="assets/cover.png"
             )
 
-    print(f"Converted {filename}.mp4 to {filename}.mp3. Process:{os.getpid()}.")
+    print(f"Converted {filename}.mp4 to {filename}.mp3.\
+         Process:{os.getpid()}.")
 
 def run_conversion():
     """
@@ -63,7 +66,7 @@ def run_conversion():
     pool.starmap(
         convert_mp4_to_mp3,
         [(path, "audios", "example") for path in glob.glob("videos/*.mp4")]
-        )
+    )
 
 if __name__ == "__main__":
     run_conversion()
